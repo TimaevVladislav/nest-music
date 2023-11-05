@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common"
 import { TracksController } from "./tracks.controller"
-import { TracksService } from "./tracks.service"
+import {TrackService} from "./tracks.service"
 import {MongooseModule} from "@nestjs/mongoose"
 
 import {Track, TrackSchema} from "./schemas/track.schema"
@@ -13,8 +13,8 @@ import {Comment, CommentSchema} from "./schemas/comment.schema"
      MongooseModule.forFeature([{name: Comment.name, schema: CommentSchema}])
   ],
   controllers: [TracksController],
-  providers: [TracksService],
-  exports: [TracksService]
+  providers: [TrackService],
+  exports: [TrackService]
 })
 
 export class TracksModule {}
