@@ -6,14 +6,23 @@ import {Model, ObjectId} from "mongoose"
 import {CreateTrackDto} from "./dto/create.track.dto"
 import {CreateCommentDto} from "./dto/create.comment.dto"
 import {Comment, CommentDocument} from "./schemas/comment.schema"
+import {FileService} from "../file/file.service"
+import {FileEnum} from "../../enums/file.enum"
 
 @Injectable()
 export class TrackService {
-    constructor(@InjectModel(Track.name) private track: Model<TrackDocument>, @InjectModel(Comment.name) private comment: Model<CommentDocument>) {}
+    constructor(@InjectModel(Track.name) private track: Model<TrackDocument>, @InjectModel(Comment.name) private comment: Model<CommentDocument>, private fileService: FileService) {}
 
-    async createTrack(dto: CreateTrackDto): Promise<Track> {
-        const track = await this.track.create({...dto, listens: 0})
-        return track.save()
+    async createTrack(dto: CreateTrackDto, files): Promise<Track> {
+        try {
+            const audio = this.fileService.createFile(FileEnum.AUDIO, files.audio[0])
+            const picture = this.fileService.createFile(FileEnum.PICTURE, files.picture[0])
+
+            const track = await this.track.create({...dto, listens: 0, audio, picture})
+            return track.save()
+        } catch (e) {
+            throw new HttpException(`Something went wrong when create the track ${e}`, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
     }
 
     async getTracks(): Promise<Track[]> {
