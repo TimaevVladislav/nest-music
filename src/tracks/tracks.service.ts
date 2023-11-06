@@ -6,8 +6,11 @@ import {Model, ObjectId} from "mongoose"
 import {CreateTrackDto} from "./dto/create.track.dto"
 import {CreateCommentDto} from "./dto/create.comment.dto"
 import {Comment, CommentDocument} from "./schemas/comment.schema"
+
 import {FileService} from "../file/file.service"
 import {FileEnum} from "../../enums/file.enum"
+import {ITracksPaginate} from "../../interfaces/tracks.paginate.interface"
+
 
 @Injectable()
 export class TrackService {
@@ -25,13 +28,16 @@ export class TrackService {
         }
     }
 
-    async getTracks(): Promise<Track[]> {
-        return this.track.find()
+    async getTracks(count = 10, offset = 0): Promise<Track[]> {
+        try {
+            return this.track.find().skip(offset).limit(count)
+        } catch (e) {
+            throw new HttpException(`Something went wrong ${e}`, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
     }
 
     async getTrack(id: ObjectId): Promise<Track> {
         const track = await this.track.findById(id).populate("comments")
-        console.log(track)
         return track
     }
 
@@ -48,6 +54,16 @@ export class TrackService {
             track.comments.push(comment._id)
             await track.save()
             return comment
+        } catch (e) {
+            throw new HttpException(`Something went wrong ${e}`, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    async addListenTrack(trackId: ObjectId): Promise<Track> {
+        try {
+            const track = await this.track.findById(trackId)
+            track.listens++
+            return await track.save()
         } catch (e) {
             throw new HttpException(`Something went wrong ${e}`, HttpStatus.INTERNAL_SERVER_ERROR)
         }

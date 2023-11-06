@@ -1,10 +1,11 @@
-import {Body, Controller, Get, Param, Post, Delete, UseInterceptors, UploadedFiles} from "@nestjs/common"
+import {Body, Controller, Get, Param, Post, Delete, UseInterceptors, UploadedFiles, Query} from "@nestjs/common"
 import {FileFieldsInterceptor} from "@nestjs/platform-express"
 
 import {TrackService} from "./tracks.service"
 import {ObjectId} from "mongoose"
 import {CreateTrackDto} from "./dto/create.track.dto"
 import {CreateCommentDto} from "./dto/create.comment.dto"
+import {ITracksPaginate} from "../../interfaces/tracks.paginate.interface"
 
 @Controller("tracks")
 export class TracksController {
@@ -17,8 +18,8 @@ export class TracksController {
     }
 
     @Get()
-    getAllTracks() {
-        return this.trackService.getTracks()
+    getAllTracks(@Query("page") page: number, @Query("offset") offset: number) {
+        return this.trackService.getTracks(page, offset)
     }
 
     @Get("/:id")
@@ -36,5 +37,8 @@ export class TracksController {
         return this.trackService.addComment(dto)
     }
 
-
+    @Post("/:id")
+    addListenTrack(@Param("id") trackId: ObjectId) {
+        return this.trackService.addListenTrack(trackId)
+    }
 }
