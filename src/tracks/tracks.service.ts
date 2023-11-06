@@ -68,4 +68,13 @@ export class TrackService {
             throw new HttpException(`Something went wrong ${e}`, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
+
+    async searchTracks(query): Promise<any> {
+        try {
+            const tracks = await this.track.findOne({name: {$regex: new RegExp(query, "i")}})
+            return tracks
+        } catch (e) {
+            throw new HttpException(`Nothing found ${e}`, HttpStatus.NOT_FOUND)
+        }
+    }
 }

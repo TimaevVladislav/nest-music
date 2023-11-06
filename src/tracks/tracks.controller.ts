@@ -41,4 +41,9 @@ export class TracksController {
     addListenTrack(@Param("id") trackId: ObjectId) {
         return this.trackService.addListenTrack(trackId)
     }
+
+    @Get("/search")
+    searchTracks(@Query("query") query) {
+        return this.trackService.searchTracks(query)
+    }
 }
