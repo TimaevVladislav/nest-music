@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common"
 import {InjectModel} from "@nestjs/mongoose"
 import {Track} from "./schemas/track.schema"
-import {Model} from "mongoose"
+import {Model, ObjectId} from "mongoose"
 
 import {CreateTrackDto} from "./dto/create.track.dto"
 
@@ -16,5 +16,10 @@ export class TrackService {
 
     async getTracks(): Promise<Track[]> {
         return this.track.find()
+    }
+
+    async getTrack(id: ObjectId): Promise<Track> {
+        const track = await this.track.findById(id)
+        return track
     }
 }

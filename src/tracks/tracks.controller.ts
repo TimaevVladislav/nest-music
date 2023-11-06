@@ -1,7 +1,8 @@
-import {Body, Controller, Get, Post} from "@nestjs/common"
+import {Body, Controller, Get, Param, Post} from "@nestjs/common"
 
 import {TrackService} from "./tracks.service"
 import {CreateTrackDto} from "./dto/create.track.dto"
+import {ObjectId} from "mongoose"
 
 @Controller("tracks")
 export class TracksController {
@@ -15,5 +16,10 @@ export class TracksController {
     @Get()
     getAllTracks() {
         return this.trackService.getTracks()
+    }
+
+    @Get("/:id")
+    getTrack(@Param("id") id: ObjectId) {
+        return this.trackService.getTrack(id)
     }
 }
